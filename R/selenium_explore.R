@@ -1,6 +1,5 @@
 #' filter.webElement
 #' @export
-
 filter.webElement <- function(elements, attr, value){
   if(class(elements)[[1]] != "list"){elements <- list(elements)}
   values <- elements %>%
@@ -20,7 +19,6 @@ filter.webElement <- function(elements, attr, value){
 
 #' screenshot
 #' @export
-
 screenshot <- function(browser, display = T, useViewer = T, file = NULL){
   browser$screenshot(display, useViewer, file)
 }

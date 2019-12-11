@@ -48,7 +48,6 @@ switch_to_frame <- function(chrome, div_value = "", div_using = "css selector",
 
 #' set_attribute
 #' @export
-
 set_attribute <- function(elements, attr, value){
   if(class(elements)[[1]] != "list"){elements <- list(elements)}
   elements %>%
@@ -61,7 +60,6 @@ set_attribute <- function(elements, attr, value){
 
 #' get_attribute
 #' @export
-
 get_attribute <- function(elements, attr){
   if(class(elements)[[1]] != "list"){elements <- list(elements)}
   purrr::map_chr(elements, ~{

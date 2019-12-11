@@ -1,6 +1,5 @@
 #' chrome_init
 #' @export
-
 chrome_init <- function(view = T, name = "", ua = 1){
   
   name <- ifelse(name == "", "chrome", name)
@@ -23,7 +22,6 @@ chrome_init <- function(view = T, name = "", ua = 1){
 
 #' get_driver
 #' @export
-
 get_driver <- function(port, ua = 1){
   eCaps <- list(
     chromeOptions =
@@ -53,7 +51,6 @@ get_driver <- function(port, ua = 1){
 
 #' renew_window
 #' @export
-
 renew_window <- function(chrome, max = T){
   if(!max){max_size <- function(x) return(x)}
   chrome %>%
