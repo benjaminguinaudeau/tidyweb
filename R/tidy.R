@@ -60,7 +60,7 @@ tidy_element <- function(elems, depth = 0){
                   children_attr <- children %>%
                     purrr::map_dfr(tidyweb::get_all_attribute) %>%
                     cbind(dplyr::select(.x, dplyr::contains("id_"))) %>%
-                    dplyr::as_tibble %>%
+                    dplyr::as_tibble() %>%
                     dplyr::mutate({{child_id_col}} := 1:n(),
                            depth = depth_index)
                 }

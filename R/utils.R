@@ -12,3 +12,9 @@ quiet <- function(x) {
 silently <- function(x){
   suppressMessages(suppressWarnings(x))
 }
+
+#' push_github
+
+push_github <- function(message = ""){
+  system(glue::glue("git add -A && git commit -m {message} && git push"))
+}
