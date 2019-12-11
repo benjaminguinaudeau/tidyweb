@@ -18,3 +18,5 @@ silently <- function(x){
 push_github <- function(message = ""){
   system(glue::glue("git add -A && git commit -m {message} && git push"))
 }
+
+
