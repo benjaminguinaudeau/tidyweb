@@ -13,7 +13,7 @@ chrome_init <- function(view = T, name = "", ua = 1){
     bashR::wait(4, .5)
   }
   if(name %in% dockeR::running_containers()){
-    chrome <- dockeR::quiet(dockeR::get_driver(port = dockeR::get_port(name, 4444), ua = ua))
+    chrome <- dockeR::quiet(tidyweb::get_driver(port = dockeR::get_port(name, 4444), ua = ua))
   }
   
   if(view == T){dockeR::view_container(name)}
