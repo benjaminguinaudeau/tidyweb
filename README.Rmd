@@ -41,7 +41,7 @@ devtools::load_all()
 
 I like to use the [dockeR](http://github.com/benjaminguinaudeau/dockeR) package to use a Selenium server running in a docker container, but this will work with any driver generated from RSelenium. This only work if docker is installed on your computer and the deamon running.
 
-```{r, eval = T}
+```{r, eval = T, message=FALSE}
 # remotes::install_github("benjaminguinaudeau/dockeR")
 tidyweb::quiet(library(tidyverse))
 
@@ -50,12 +50,16 @@ chrome <- chrome_init("chrome", view = F, ua = NULL) # View param only works for
 
 For this example, I will scrape the analysis provided by socialblade of CNN's youtube channel. 
 
-```{r,eval = T}
+```{r,eval = T, message=FALSE}
 chrome %>% 
   open %>%
   go("https://socialblade.com/youtube/user/cnn")
+```
 
+
+```{r,eval = T}
 body <- chrome %>%  elements("#socialblade-user-content")
+body
 ```
 
 
@@ -68,6 +72,7 @@ depth_one$children_1[[1]] %>% glimpse
 
 
 ```{r, eval = T}
+body <- chrome %>%  elements("#socialblade-user-content")
 depth_three <- body %>% tidy_element(3) %>% glimpse
 depth_three$children_3[[1]] %>% glimpse
 
@@ -77,7 +82,7 @@ depth_three$children_3[[1]] %>% glimpse
 depth_three %>%
   select(contains("children")) %>%
   map_dfr(1) %>%
-  filter(style %>% str_detect("color:#41a200;")) %>%
+  filter(style %>% str_detect("color:#41a200;"))
   
 ```
 
