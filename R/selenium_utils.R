@@ -24,10 +24,30 @@ find_child <- function(element, value = "", using = "css selector"){element$find
 #' @export
 find_children <- function(element, value = "", using = "css selector"){element$findChildElements(value = value, using = using)}
 
+#' switch_to_window
+#' @export
+switch_to_window <- function (chrome, window_handle){
+  qpath <- sprintf("%s/session/%s/window", chrome$serverURL, chrome$sessionInfo[["id"]])
+  remDr$queryRD(qpath, "POST", qdata = list(handle = windowId))
+  
+  return(invisible(chrome))
+}
+
+#' switch_to_frame
+#' @export
+switch_to_frame <- function(chrome, div_value = "", div_using = "css selector",
+                            frame_value = "", frame_using = "name"){
+  elem <- chrome %>%
+    element(div_value, div_using) %>%
+    find_child(frame_value, frame_using)
+  
+  chrome$switchToFrame(elem)
+  return(invisible(chrome))
+}
+
 
 #' set_attribute
 #' @export
-
 set_attribute <- function(elements, attr, value){
   if(class(elements)[[1]] != "list"){elements <- list(elements)}
   elements %>%
@@ -40,7 +60,6 @@ set_attribute <- function(elements, attr, value){
 
 #' get_attribute
 #' @export
-
 get_attribute <- function(elements, attr){
   if(class(elements)[[1]] != "list"){elements <- list(elements)}
   purrr::map_chr(elements, ~{
