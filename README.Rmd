@@ -1,12 +1,30 @@
 ---
-title: "Readme"
 output: github_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+# tidyweb <img src="man/figures/tidyweb_logo.png" width="160px" align="right" />
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+
 ```
 
-# Tidyweb
+```{r, echo = FALSE, results='asis', eval = T}
+
+library(badger)
+
+git_repo <- "benjaminguinaudeau/tidyweb"
+
+cat(
+	badge_code_size(git_repo),
+	badge_last_commit(git_repo)
+)
+```
 
 This package is meant to ease web scraping with Selenium by "tidying" the html structure. To do so, it iterates recursively on web elements until a given depth and returns a tibble, with the children elements nested in list-columns. That way, tidy principles can be used to identify specific elements and eventually interact with them. 
