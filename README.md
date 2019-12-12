@@ -3,15 +3,11 @@
 
 # tidyweb <img src="man/figures/tidyweb_logo.png" width="160px" align="right" />
 
-[![](https://img.shields.io/github/languages/code-size/benjaminguinaudeau/tidyweb.svg)](https://github.com/benjaminguinaudeau/tidyweb)
-[![](https://img.shields.io/github/last-commit/benjaminguinaudeau/tidyweb.svg)](https://github.com/benjaminguinaudeau/tidyweb/commits/master)
+[![](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental) [![](https://img.shields.io/github/languages/code-size/benjaminguinaudeau/tidyweb.svg)](https://github.com/benjaminguinaudeau/tidyweb) [![](https://img.shields.io/github/last-commit/benjaminguinaudeau/tidyweb.svg)](https://github.com/benjaminguinaudeau/tidyweb/commits/master)
 
-This package is meant to ease web scraping with Selenium by “tidying”
-the html structure. To do so, it iterates recursively on web elements
-until a given depth and returns a tibble, with the children elements
-nested in list-columns. That way, tidy principles can be used to
-identify specific elements and eventually interact with them.
+>Use tidy data principles to interact with HTML files!
 
+This package is meant to ease web scraping with Selenium by "tidying" the html structure. To do so, it iterates recursively on web elements until a given depth and returns a tibble, with the children elements nested in list-columns. That way, tidy principles can be used to identify specific elements and eventually interact with them. 
 ## Install
 
 ``` r
@@ -21,10 +17,9 @@ devtools::load_all()
 
 ## How to use?
 
-I like to use the [dockeR](http://github.com/benjaminguinaudeau/dockeR)
-package to use a Selenium server running in a docker container, but this
-will work with any driver generated from RSelenium. This only work if
-docker is installed on your computer and the deamon running.
+First you need to start a Selenium server. 
+
+I like to use the [dockeR](http://github.com/benjaminguinaudeau/dockeR) package to run a Selenium server in a docker container, but this will work with any driver generated from [RSelenium](https://github.com/ropensci/RSelenium). This only works if [Docker](https://www.docker.com/) is installed on your computer and the deamon is running.
 
 ``` r
 # remotes::install_github("benjaminguinaudeau/dockeR")
