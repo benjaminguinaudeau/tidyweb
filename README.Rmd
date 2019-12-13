@@ -22,11 +22,13 @@ library(badger)
 git_repo <- "benjaminguinaudeau/tidyweb"
 
 cat(
+  badge_lifecycle(),
 	badge_code_size(git_repo),
 	badge_last_commit(git_repo)
 )
 ```
 
+>Use tidy data principles to interact with HTML files!
 
 This package is meant to ease web scraping with Selenium by "tidying" the html structure. To do so, it iterates recursively on web elements until a given depth and returns a tibble, with the children elements nested in list-columns. That way, tidy principles can be used to identify specific elements and eventually interact with them. 
 
@@ -34,31 +36,33 @@ This package is meant to ease web scraping with Selenium by "tidying" the html s
 
 ```{r, message=FALSE}
 # remotes::install_github("benjaminguinaudeau/tidyweb")
-devtools::load_all()
+library(tidyweb)
 ```
 
 ## How to use? 
 
-I like to use the [dockeR](http://github.com/benjaminguinaudeau/dockeR) package to use a Selenium server running in a docker container, but this will work with any driver generated from RSelenium. This only work if docker is installed on your computer and the deamon running.
+First you need to start a Selenium server. 
+
+I like to use the [dockeR](http://github.com/benjaminguinaudeau/dockeR) package to run a Selenium server in a docker container, but this will work with any driver generated from [RSelenium](https://github.com/ropensci/RSelenium). This only works if [Docker](https://www.docker.com/) is installed on your computer and the deamon is running.
 
 ```{r, eval = T, message=FALSE}
 # remotes::install_github("benjaminguinaudeau/dockeR")
+
 tidyweb::quiet(library(tidyverse))
 
-chrome <- chrome_init("chrome", view = F, ua = NULL) # View param only works for mac
+chrome <- tidyweb::chrome_init("chrome", view = F, ua = NULL) # View param only works for mac
 ```
 
-For this example, I will scrape the analysis provided by socialblade of CNN's youtube channel. 
+For this example, I will scrape meta data CNN's YouTube channel provided by SocialBlade. 
 
 ```{r,eval = T, message=FALSE}
-chrome %>% 
-  open %>%
+chrome  %>%
   go("https://socialblade.com/youtube/user/cnn")
 ```
 
 
 ```{r,eval = T}
-body <- chrome %>%  elements("#socialblade-user-content")
+body <- chrome %>%  tidyweb::elements("#socialblade-user-content")
 body
 ```
 
