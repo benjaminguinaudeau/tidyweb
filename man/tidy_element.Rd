@@ -7,7 +7,7 @@
 tidy_element(element, depth = 0)
 }
 \arguments{
-\item{element}{a list of xml nodes representing individual divs}
+\item{element}{a list of xml nodes representing individual divs or a list of selenium-elements}
 
 \item{depth}{a numeric value indicating how deep the search should go.}
 }

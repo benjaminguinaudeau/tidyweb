@@ -13,7 +13,7 @@ tidy_element <- function(element, depth = 0){
     get_attr <- get_attributes
   } else {
     get_children <- function(x) find_children(x, "*", "xpath")
-    get_attr <- tidyselenium::get_all_attribute
+    get_attr <- tidyselenium::get_all_attributes
   }
   
   

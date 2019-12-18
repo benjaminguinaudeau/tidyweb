@@ -41,20 +41,21 @@ This package is meant to ease web scraping with Selenium by "tidying" the html s
 ```{r, message=FALSE}
 # remotes::install_github("benjaminguinaudeau/tidyweb")
 library(tidyweb)
+library(dplyr)
 ```
 
 ## How to use with Rvest?
 
 ```{r}
-page <- read_html("https://www.nytimes.com/")
+page <- xml2::read_html("https://www.nytimes.com/")
 
 art <- page %>%
-  html_nodes("article")
+  rvest::html_nodes("article")
 
 
 parsed_art <- art %>% tidy_element(depth = 10) 
 
-parse_art %>% glimpse
+parsed_art %>% glimpse
 parsed_art %>% filter(!is.na(href)) %>% glimpse
 parsed_art %>% 
   separate_rows(class, sep = "\\s+") %>%
@@ -67,65 +68,5 @@ parsed_art %>%
   ggplot(aes(x = depth)) + geom_histogram()
   
 
-```
-
-
-
-## How to use? 
-
-First you need to start a Selenium server. 
-
-I like to use the [dockeR](http://github.com/benjaminguinaudeau/dockeR) package to run a Selenium server in a docker container, but this will work with any driver generated from [RSelenium](https://github.com/ropensci/RSelenium). This only works if [Docker](https://www.docker.com/) is installed on your computer and the deamon is running.
-
-```{r, eval = T, message=FALSE}
-# remotes::install_github("benjaminguinaudeau/dockeR")
-
-tidyweb::quiet(library(tidyverse))
-
-chrome <- tidyweb::chrome_init("chrome", view = F, ua = NULL) # View param only works for mac
-```
-
-For this example, I will scrape meta data CNN's YouTube channel provided by SocialBlade. 
-
-```{r,eval = T, message=FALSE}
-<<<<<<< HEAD
-
-
-chrome %>% 
-  open %>%
-=======
-chrome  %>%
->>>>>>> 842397ba63d304fcec3a3d4a153f94ad7fec4a9e
-  go("https://socialblade.com/youtube/user/cnn")
-```
-
-
-```{r,eval = T}
-body <- chrome %>%  tidyweb::elements("#socialblade-user-content")
-body
-```
-
-
-## Lets start by exploring the first depth-level
-
-```{r, eval = T}
-depth_one <- body %>% tidy_element(1) %>% glimpse
-depth_one$children_1[[1]] %>% glimpse
-```
-
-
-```{r, eval = T}
-body <- chrome %>%  elements("#socialblade-user-content")
-depth_three <- body %>% tidy_element(3) %>% glimpse
-depth_three$children_3[[1]] %>% glimpse
-
-```
-
-```{r}
-depth_three %>%
-  select(contains("children")) %>%
-  map_dfr(1) %>%
-  filter(style %>% str_detect("color:#41a200;"))
-  
 ```
 

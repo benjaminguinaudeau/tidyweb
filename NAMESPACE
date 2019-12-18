@@ -3,4 +3,3 @@
 export(get_attributes)
 export(get_unique_id)
 export(tidy_element)
-export(tidy_element_sel)

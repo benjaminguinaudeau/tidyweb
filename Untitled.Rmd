@@ -11,6 +11,10 @@ devtools::load_all()
 
 ```
 
+```{r}
+chrome
+```
+
 
 
 ```{r}
