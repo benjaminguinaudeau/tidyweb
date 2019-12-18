@@ -5,6 +5,10 @@ output: github_document
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 # tidyweb <img src="man/figures/tidyweb_logo.png" width="160px" align="right" />
 
++ Todo
+  * include htm-package send by fabio
+
+
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -37,6 +41,34 @@ This package is meant to ease web scraping with Selenium by "tidying" the html s
 devtools::load_all()
 ```
 
+## How to use with Rvest?
+
+```{r}
+page <- read_html("https://www.nytimes.com/")
+
+art <- page %>%
+  html_nodes("article")
+
+
+parsed_art <- art %>% tidy_element(depth = 10) 
+
+parse_art %>% glimpse
+parsed_art %>% filter(!is.na(href)) %>% glimpse
+parsed_art %>% 
+  separate_rows(class, sep = "\\s+") %>%
+  count(class, sort = T) %>%
+  glimpse
+
+parsed_art %>% 
+  mutate(depth = str_count(.id, "_") + 1) %>%
+  group_by(depth) %>%
+  ggplot(aes(x = depth)) + geom_histogram()
+  
+
+```
+
+
+
 ## How to use? 
 
 I like to use the [dockeR](http://github.com/benjaminguinaudeau/dockeR) package to use a Selenium server running in a docker container, but this will work with any driver generated from RSelenium. This only work if docker is installed on your computer and the deamon running.
@@ -51,6 +83,8 @@ chrome <- chrome_init("chrome", view = F, ua = NULL) # View param only works for
 For this example, I will scrape the analysis provided by socialblade of CNN's youtube channel. 
 
 ```{r,eval = T, message=FALSE}
+
+
 chrome %>% 
   open %>%
   go("https://socialblade.com/youtube/user/cnn")

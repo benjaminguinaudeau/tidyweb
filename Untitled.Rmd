@@ -1,0 +1,258 @@
+---
+title: "twitter_scroll"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+pacman::p_load(tidyverse, magrittr, rvest, dockeR, tidyselenium)
+devtools::load_all()
+
+```
+
+
+
+```{r}
+get_main_tree <- function(chrome){
+  main <- chrome %>% 
+    dockeR::element("body") %>% 
+    dockeR::element("section") %>% 
+    dockeR::element("article") %>%
+    dockeR::find_children("*", "xpath")
+  
+  tree <-  main[1] %>%
+    # map(~{
+    #   main[[1]] %>% get_attribute("innerHTML")
+    #     mutate(html = get_attribute("innerHTML"))
+    # })
+    # list %>%
+    # tibble(element = main) %>%
+    # mutate(text = main %>% map_chr(get_text))
+    tidy_element_sel( depth = 2) %>%
+    slice(1) %>%
+    mutate(layer = str_count(.id, "_") + 1)
+  
+  return(tree)
+}
+
+get_tweets <- function(tree, already  = tibble(text = NA_character_)){
+  
+  tweets <- tree %>% 
+    # group_by(layer) %>%
+    # add_count(class, name = "total", sort = T) %>%
+    # filter(total == max(total)) %>%
+    # ungroup %>%
+    # filter(total> 9) %>%
+    # add_count(class, name = "total") %>%
+    # filter(total == max(total)) %>%
+    mutate(text = element %>% map_chr(~try(get_text(.x), silent = T))) %>%
+    filter(str_length(text) > 1) %>%
+    filter(!text %in% already$text) %>%
+    mutate(html = element %>% imap_chr(~{if(length(.x) != 0){.x %>% get_attribute(attr = "innerHTML")}}))
+  
+  return(tweets)
+}
+
+```
+
+
+
+```{r}
+chrome <- chrome_init("chrome")
+view_container("chrome") 
+
+chrome$closeall()
+chrome$open()
+
+chrome %>%
+  go("http://twitter.com")
+
+# doc_exec("sudo apt-get -y update")
+# doc_exec("sudo apt-get -y upgrade")
+# doc_exec("sudo apt-get install -y python-pip")
+# doc_exec("pip install pyautogui")
+# doc_exec("sudo apt-get install -y python-tk python-dev")
+
+doc_hot_keys <- function (message, interval = NULL){
+  doc_exec("chrome", glue::glue("python -c \"from pyautogui import * ; hotkey('{message}')\""))
+}
+
+login <- "fabio.votta+3@gmail.com"
+pwd <- "vcbsdfbcvMA_21!!"
+doc_mouse_type(login)
+doc_hot_keys("tab")
+doc_mouse_type(pwd)
+doc_hot_keys("tab")
+doc_hot_keys("tab")
+doc_hot_keys("enter")
+
+# Connect
+
+scroll_tweet <- function(chrome){
+  tree <- chrome %>% get_main_tree()
+  tweet <- get_tweets(tree) %>%
+    mutate(handle = str_extract(text, "@\\w+"))
+  # save_tweet <- tweet
+  
+  
+  tweet %>%
+    pull(handle) %>%
+    paste(1:length(.), ., collapse = "\n") %>%
+    cat
+  
+  # save_tweet$html %>%
+  #   map(read_html) %>%
+  #   map(html_structure)
+  # 
+  
+  low <- tweet %>% 
+    transmute(size = element %>% map(~as_tibble(.x$getElementSize()))) %>%
+    unnest(size) %>%
+    # pull(height) %>%
+    # sum
+    pull(height) %>%
+    mean(na.rm = T)
+  
+  # dockeR::doc_mouse_move(x = 300, y = -350)
+  tweet %>% 
+    split(1:nrow(.)) %>%
+    tail(-4) %>%
+    map(~{
+      if(runif(1, 0, 1) > .5){
+        a <- .x %>%
+          pull(element) %>%
+          tidy_element_sel(depth = 10) %>%  
+          filter(role == "button") %>%
+          filter(testid == "like") %>%
+          pull(element)
+        
+        bashR::wait()
+        try({
+          a[[1]] %>% tidyweb::click(.)
+          message("Liked ", str_extract(.x$text, "@\\w+"))
+        })
+        
+      } else {
+        bashR::wait()
+        dockeR::doc_scroll(-low*2/100)
+      }
+      
+    })
+  
+  return(tweet)
+}
+
+chrome %>% scroll_tweet()
+
+save_tweet <- bind_rows(save_tweet, tweet) %>%
+  unique
+
+tweets %>%
+  select(html) %>%
+  mutate(text = html %>% map(read_html) %>% map_chr(~html_text(.x))) %>%
+  select(text)
+
+a <- chrome %>%  scroll_tweet
+b <- chrome %>%  scroll_tweet
+
+bind_rows(a, b) %>%
+  distinct(text)
+
+res <- 1:5 %>%
+  map_dfr(~{scroll_tweet(chrome)})
+
+
+```
+
+```{r}
+
+tidy_element_sel <- function(elems, depth = 0){
+  
+  out <- elems %>%
+    purrr::map_dfr(tidyweb::get_all_attribute) %>%
+    dplyr::mutate(id_parent = 1:n())
+  
+  depth_index <- 0
+  
+  while(depth_index != depth){
+    
+    depth_index <- depth_index + 1
+    # message("Current depth: ", depth_index)
+    child_col <- paste0("children_", depth_index)
+    child_id_col <- paste0("id_children_", depth_index)
+    element_col <- paste0("element_", "depth_index")
+    
+    if(depth_index != 1){
+      parent_col <- dplyr::sym(paste0("children_", depth_index - 1))
+      if(all(out %>% dplyr::pull({{parent_col}}) %>% purrr::map_lgl(~length(.x) == 0))){
+        message("Max depth was reached")
+        # out <- out %>% select(-parent_col)
+        return(out)
+      }
+    }
+    
+    if(depth_index == 1){
+      
+      out <- out %>%
+        dplyr::mutate({{child_col}} := purrr::map2(element, id_parent,~{
+          .x %>%
+            tidyweb::find_children("*", "xpath") %>%
+            purrr::map_dfr(tidyweb::get_all_attribute) %>%
+            dplyr::mutate(id_parent = .y,
+                          {{child_id_col}} := 1:n(),
+                          depth = depth_index)
+        }))
+    } else {
+      
+      out <- out %>%
+        mutate(parents = {{parent_col}}) %>%
+        mutate({{child_col}} := map(parents, ~{
+          if(length(.x) != 0){
+            parent <- .x
+            # child <- children[[1]]
+            
+            parent %>%
+              split(1:nrow(.)) %>%
+              imap_dfr(~{
+                children <- .x$element[[1]] %>%
+                  find_children("*", "xpath")
+                
+                if(length(children) > 0){
+                  children_attr <- children %>%
+                    purrr::map_dfr(tidyweb::get_all_attribute) %>%
+                    cbind(dplyr::select(.x, dplyr::contains("id_"))) %>%
+                    dplyr::as_tibble() %>%
+                    dplyr::mutate({{child_id_col}} := 1:n(),
+                                  depth = depth_index)
+                }
+              })
+          }
+        })) %>%
+        dplyr::select(-parents) 
+    }
+  }
+  
+  out <-   out %>%
+    select(contains("children")) %>%
+    reduce(bind_rows) %>%
+    bind_rows(select(out, -contains("children_"))) %>%
+    # select(id, class, id_parent, contains("id_children"), everything()) %>%
+    # glimpse
+    mutate_at(vars(contains("id_children"), id_parent), as.character) %>%
+    split(1:nrow(.)) %>%
+    map_dfr(get_unique_id) %>%
+    mutate(text = NA) %>%
+    # mutate(text = map_chr(element, ~{
+    #   .x %>%
+    #     get_text() %>%
+    #     str_squish
+    # })) %>%
+    select(.id, element, text, everything())
+  
+  return(out)
+  
+}
+
+```
+
