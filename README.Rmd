@@ -5,13 +5,11 @@ output: github_document
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 # tidyweb <img src="man/figures/tidyweb_logo.png" width="160px" align="right" />
 
-+ Todo
-  * include htm-package send by fabio
-
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
+  eval = F,
   comment = "#>",
   fig.path = "man/figures/README-",
   out.width = "100%"
@@ -70,3 +68,6 @@ parsed_art %>%
 
 ```
 
+## Thanks
+
+A huge thank you to [Favstats](https://github.com/favstats) for designing each of the hex-stickers. 

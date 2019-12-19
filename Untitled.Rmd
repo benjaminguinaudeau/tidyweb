@@ -9,6 +9,12 @@ knitr::opts_chunk$set(echo = TRUE)
 pacman::p_load(tidyverse, magrittr, rvest, dockeR, tidyselenium)
 devtools::load_all()
 
+# devtools::install_github("benjaminguinaudeau/dockeR")
+# devtools::install_github("benjaminguinaudeau/bashR")
+# devtools::install_github("benjaminguinaudeau/selinput")
+# devtools::install_github("benjaminguinaudeau/tidyweb")
+# devtools::install_github("benjaminguinaudeau/tidyselenium")
+
 ```
 
 ```{r}
