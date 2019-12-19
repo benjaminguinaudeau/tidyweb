@@ -47,12 +47,17 @@ tidy_element <- function(element, depth = 0){
       
       out <- out %>% 
         dplyr::mutate({{child_col}} := purrr::map2(element, id_parent,~{
-          .x %>%
-            get_children %>%
-            purrr::map_dfr(get_attr, text = T)  %>%
-            dplyr::mutate(id_parent = .y,
-                          {{child_id_col}} := 1:dplyr::n(),
-                          depth = {{depth_index}})
+          child <- .x %>%
+            get_children 
+          
+          if(length(child) != 0){
+            out <- child %>% 
+              purrr::map_dfr(get_attr, text = T)  %>%
+              dplyr::mutate(id_parent = .y,
+                            {{child_id_col}} := 1:dplyr::n(),
+                            depth = {{depth_index}})
+          } 
+          return(out)
         }))
       
     } else {

@@ -69,7 +69,7 @@ get_unique_id <- function(d){
       paste(d$id_parent, .,  sep = "_")
     
     d %>%
-      select(-contains("id_"), -depth) %>%
-      mutate(.id = {{id}})
+      dplyr::select(-dplyr::contains("id_"), -depth) %>%
+      dplyr::mutate(.id = {{id}})
   }
 }
