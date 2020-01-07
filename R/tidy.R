@@ -4,7 +4,7 @@
 #' @return A tibble with the elements attribute and a column for each layer containing the children from the corresponding layer.
 #' @export
 
-tidy_element <- function(element, depth = 0, quiet = F){
+tidy_element <- function(element, depth = 0, quiet = T){
   
   if(!class(element)[1] %in% c("xml_nodeset", "list")) element <- list(element)
   
