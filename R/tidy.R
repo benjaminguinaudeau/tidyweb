@@ -4,7 +4,7 @@
 #' @return A tibble with the elements attribute and a column for each layer containing the children from the corresponding layer.
 #' @export
 
-tidy_element <- function(element, depth = 0){
+tidy_element <- function(element, depth = 0, quiet = F){
   
   if(!class(element)[1] %in% c("xml_nodeset", "list")) element <- list(element)
   
@@ -30,14 +30,16 @@ tidy_element <- function(element, depth = 0){
     
     if(depth_index != 0){
       if(all(out[[parent_col]] %>% purrr::map_lgl(~length(.x) == 0))){
-        message("Max depth was reached")
+        if(!quiet){message("Max depth was reached")}
         break(out)
       }
     }
     
     depth_index <- depth_index + 1
-    utils::flush.console()
-    cat("\rCurrent depth: ", depth_index)
+    if(!quiet){
+      utils::flush.console()
+      cat("\rCurrent depth: ", depth_index)
+    }
     
     child_col <- paste0("children_", depth_index)
     child_id_col <- paste0("id_children_", depth_index)
